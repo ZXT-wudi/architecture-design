@@ -1,0 +1,27 @@
+{
+  "skill_name": "architecture-design",
+  "version": "1.0",
+  "method": "在新会话（工作目录含本技能）逐条粘贴 prompt，记录技能是否被触发。每条至少测 2-3 次。触发率 < 100% 的 should-trigger 条目或误触发的 should-not 条目 → 修订 SKILL.md description 后重测（详见 evals/README.md）",
+  "evals": [
+    { "id": 1, "should_trigger": true, "prompt": "我想做一个电商网站，帮我从零开始规划一下", "note": "最典型触发：新项目全流程" },
+    { "id": 2, "should_trigger": true, "prompt": "帮我设计一个高并发秒杀系统", "note": "系统设计触发" },
+    { "id": 3, "should_trigger": true, "prompt": "我们公司想做个内部审批系统，该用什么技术栈？", "note": "技术选型触发（口语含疑句）" },
+    { "id": 4, "should_trigger": true, "prompt": "给现有的博客系统加个评论功能，怎么设计比较好", "note": "brownfield 触发（存量加功能）" },
+    { "id": 5, "should_trigger": true, "prompt": "画一下我们项目的架构图？微服务还是单体好", "note": "架构风格+图表触发" },
+    { "id": 6, "should_trigger": true, "prompt": "我想做个记账 App，先帮我理一理需求", "note": "随意口吻的想法（description 的 even for a casual idea）" },
+    { "id": 7, "should_trigger": true, "prompt": "这个项目要写设计文档和 ADR，从哪开始", "note": "设计文档/ADR 触发" },
+    { "id": 8, "should_trigger": true, "prompt": "帮我把这个项目拆成开发任务和里程碑", "note": "实施计划触发" },
+    { "id": 9, "should_trigger": true, "prompt": "商品详情页该怎么设计？需要列一下页面清单吗", "note": "UI/UX + 页面清单触发（新加维度）" },
+    { "id": 10, "should_trigger": true, "prompt": "系统要支持 10 万用户，数据库和缓存怎么选", "note": "规模估算/数据层选型触发" },
+    { "id": 11, "should_trigger": false, "prompt": "帮我写个函数，把日期字符串转成时间戳", "note": "单点编码任务，不得触发" },
+    { "id": 12, "should_trigger": false, "prompt": "这段代码有个 bug，数组越界了，帮我修一下", "note": "bug 修复，不得触发" },
+    { "id": 13, "should_trigger": false, "prompt": "把页面主色调从蓝色改成绿色", "note": "样式微调，不得触发" },
+    { "id": 14, "should_trigger": false, "prompt": "解释一下什么是 Redis 持久化", "note": "知识问答，非设计请求" },
+    { "id": 15, "should_trigger": false, "prompt": "帮我写个爬虫抓取豆瓣电影 Top250", "note": "一次性脚本任务，不得触发" },
+    { "id": 16, "should_trigger": false, "prompt": "这个正则表达式为什么匹配不上？", "note": "调试问题，不得触发" },
+    { "id": 17, "should_trigger": false, "prompt": "把 requirements.txt 里的 Flask 升级到最新版", "note": "依赖升级，不得触发（虽含 requirements 字样）" },
+    { "id": 18, "should_trigger": false, "prompt": "帮我优化这条 SQL 的执行速度", "note": "单点性能修复，非架构设计" },
+    { "id": 19, "should_trigger": false, "prompt": "git rebase 和 merge 有什么区别？", "note": "概念问答" },
+    { "id": 20, "should_trigger": false, "prompt": "帮我给项目配置一下 ESLint", "note": "工程配置任务" }
+  ]
+}

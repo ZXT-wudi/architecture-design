@@ -200,6 +200,12 @@ node scripts/check_traceability.mjs selftest/gate-pass   # expect exit 0
 
 `evals/` ships 20 trigger-reliability prompts (10 should-trigger, 10 should-not) for tuning the skill description.
 
+## 附带技能 Bundled Skill: ponytail
+
+[`ponytail/`](ponytail/) 收录一个独立的**防过度工程化**技能，改写自 [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail)（MIT）：让编码代理像"房间里最懒的资深工程师"一样工作——写代码前先走七级梯子（不需要就不写 → 复用代码库 → 标准库 → 平台原生 → 已装依赖 → 一行搞定 → 最少实现），而校验、安全、错误处理绝不简化。与架构设计技能互补：本技能管"整体不返工"，ponytail 管"不造多余的车轮"。
+
+安装：把 `ponytail/SKILL.md` 复制到编码代理的技能目录，如 `~/.agents/skills/ponytail/SKILL.md`（用户级，所有项目生效）或 `<项目>/.agents/skills/ponytail/SKILL.md`（仅本项目）。
+
 ## Credits
 
 Standing on the shoulders of the 2026 spec-driven-development community:

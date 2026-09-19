@@ -9,6 +9,19 @@
 
 ---
 
+## 最新更新 What's New（v1.3.1 ｜ 2026-09）
+
+本轮把"开发执行"环节升级为**写码与审查分离**，并给需求与变更环节加上量化闸门：
+
+- **双代理执行**：标准/完整档每个任务由实现者子代理写码，零上下文评审者子代理按 [`references/code-review.md`](references/code-review.md) 的 10 项清单审查——"验收标准 + 质量门禁 + 评审通过"三项达标才收账，阻塞项回实现者最多修 2 轮；迷你档与存量轻量路径保持单代理 + 自查。
+- **计划评审**：Phase 9 产出 plan.md 后，派未参与规划的子代理审核计划忠实性（MUST 覆盖、验收标准可独立验证、依赖图无环无断链、无幽灵任务）；迷你档与轻量路径豁免。
+- **模糊度评分闸门**：需求问卷每轮按维度自评（0.05 步进），> 0.20 继续追问不硬写，≤ 0.10 压缩为一轮批量确认。
+- **变更冲突检查**：需求变更沿追踪矩阵按五类固定冲突（服务归属/接口签名/实体关系/规则矛盾/增量叠加）列波及清单，逐节 before → after，回退/接受/放弃三选一裁决。
+- **失败分级处理**：A 类实现错误修复重试（2 次不过先跳过）、B 类计划/设计错误停下改蓝图或 ADR（不许蒙混过关）、C 类环境问题自动修复或跳过。
+- **过期检测**：跨会话恢复时检查规格是否晚于计划被改过，是则先做影响分析再继续执行。
+
+---
+
 ## 为什么需要它 Why
 
 项目返工的头号原因是**需求遗漏**和**设计与实现脱节**。直接对 AI 说"帮我做个系统"，通常得到的是"先写代码再说"。本技能把应对手段做成**机制**而不是提醒：
@@ -16,14 +29,17 @@
 | 机制 | 说明 |
 |---|---|
 | 十一维度需求问卷 | 业务/用户/功能/**界面与体验**/数据/集成/非功能/合规/运维/约束/优先级，逐维度过一遍，主动替你问出容易忘的需求（权限、导出、备份、并发冲突、SEO、界面状态…） |
+| 模糊度评分闸门 | 每轮提问后按维度自评模糊度（0.05 步进），> 0.20 继续追问不硬写，≤ 0.10 压缩为一轮批量确认；推断信息显式标注"假设，待确认" |
 | EARS 验收标准 | 每条需求编号（REQ-001）+ "当…系统应…"可测验收标准，设计、任务、验收全部围绕编号追溯 |
 | 两道门禁 | 需求未确认不设计、蓝图未确认不开发；支持**预授权**（"按你的推荐走，里程碑再找我"） |
 | 规模估算防过度设计 | back-of-envelope 推算 QPS/存储/带宽 → 定架构档次（L1 单机 ~ L4 分布式），三个用户的项目上不了 K8s |
 | 机器可校验门禁 | 结构预检脚本：必备章节、MUST 缺 EARS、≥80% 追溯底线、幽灵 REQ 编号、ADR 状态枚举、蓝图缺页面清单 |
 | 页面清单（UX） | 前端需求的基本单位：页面 → 路由 → 承载 REQ → 关键组件；可选 HTML 静态视觉稿 |
 | ADR 决策记录 | 每个关键选型一篇一页纸的决策记录，系统因此有自己的"编年史" |
-| 波次并行执行 | 任务按依赖图分波次，波内多会话/子代理并行开发 |
-| 跨会话恢复 | 文档即断点：compaction 后重读文档恢复进度；派子代理前所需上下文必须已落盘 |
+| 双代理执行 | 每个任务"实现者写码 → 评审者（零上下文）按 code-review.md 清单审查 → 通过才收账"，阻塞项回实现者最多修 2 轮；波内多任务并行开发 |
+| 失败分级处理 | A 类实现错误修复重试（2 次不过先跳过）、B 类计划/设计错误停下改蓝图或 ADR（不许蒙混过关）、C 类环境问题自动修复或跳过 |
+| 变更冲突检查 | 需求变更沿追踪矩阵按五类固定冲突（服务归属/接口签名/实体关系/规则矛盾/增量叠加）列波及清单，逐节 before → after，回退/接受/放弃三选一裁决 |
+| 跨会话恢复 | 文档即断点：compaction 后重读文档恢复进度；恢复时做过期检测（规格晚于计划被改过，先做影响分析再执行）；派子代理前所需上下文必须已落盘 |
 | 三档分诊 | 迷你（单页 mini-blueprint）/ 标准（四份文档）/ 完整（加模块级评审）——改个 bug 不会惊动全流程 |
 
 ## 快速开始 Quick Start
@@ -101,6 +117,7 @@ architecture-design/
 │   ├── data-and-api.md       #   数据建模 / API 规范 / RBAC
 │   ├── quality-attributes.md #   质量属性 / 安全底线 / 失效模式
 │   ├── testing-quality.md    #   测试策略与 DoD 门禁
+│   ├── code-review.md        #   评审者操作手册：检查清单 / 输出格式 / 修复回路
 │   ├── deployment.md         #   环境 / CI/CD / 监控备份 / 上线清单
 │   ├── project-structure.md  #   标准目录结构与 12-Factor 要点
 │   ├── adr.md                #   ADR 写法与生命周期
@@ -122,6 +139,7 @@ architecture-design/
 - [AWS Kiro](https://kiro.dev/) —— EARS 验收语法、任务波次并行
 - [obra/superpowers](https://github.com/obra/superpowers) —— 零上下文两阶段评审、需求访谈方法
 - [buildermethods/agent-os](https://github.com/buildermethods/agent-os) —— 工程标准自动发现与注入
+- VibeCoding 实践套件（prd-to-spec / spec-to-plan / execute-plan）—— 模糊度评分闸门、变更冲突检测、实现者+评审者双代理与失败分级
 
 在架构深度上（规模估算、选型论证、C4 建模、质量/运维设计、ADR、可脚本校验的追溯矩阵）亦有独立设计。
 
@@ -139,6 +157,16 @@ One line: takes an AI coding agent from a one-sentence idea through the **full l
 > Works with any coding agent that supports the [Agent Skills](https://agentskills.io) spec (Claude Code / ZCode / Codex CLI, etc.).
 > Zero dependencies: everything is Markdown; the only executable (the gate linter) needs Node.js ≥ 18.
 
+## What's New
+
+**v1.3.1 (2026-09)** — code generation now separates writing from reviewing:
+
+- **Dual-agent execution**: in Standard/Full tiers every task is written by an implementer subagent and audited by a zero-context reviewer against the 10-item checklist in [`references/code-review.md`](references/code-review.md). A task is done only when acceptance criteria + quality gate + review all pass; blocking findings loop back to the implementer, max 2 rounds. Mini tier and the brownfield light path stay single-agent with self-check.
+- **Plan review**: after Phase 9 produces plan.md, a fresh subagent audits plan fidelity (MUST coverage, independently verifiable acceptance criteria, acyclic dependency graph, no ghost tasks). Mini tier and the light path are exempt.
+- **Ambiguity scoring gate** in the requirements interview (above 0.20 keep asking instead of guessing; at or below 0.10, one batch confirmation).
+- **Change conflict checks**: five fixed conflict classes, per-section before → after, and a revert / accept / drop ruling.
+- **A/B/C failure triage** during execution, and **staleness detection** on cross-session resume.
+
 ## Why
 
 The top causes of rework are **missed requirements** and **design/implementation drift**. This skill turns the countermeasures into *mechanics* rather than reminders:
@@ -146,14 +174,17 @@ The top causes of rework are **missed requirements** and **design/implementation
 | Mechanic | What it does |
 |---|---|
 | 11-dimension requirements interview | Business / users / features / **UI & UX** / data / integrations / NFRs / compliance / ops / constraints / priorities — proactively asks what you'd forget (permissions, exports, backups, concurrency, SEO, UI states…) |
+| Ambiguity scoring gate | After each interview round, score each dimension (0.05 steps); above 0.20 keep asking instead of guessing, at or below 0.10 collapse into one batch confirmation; inferred facts are labeled "assumption, to confirm" |
 | EARS acceptance criteria | Every requirement numbered (REQ-001) with testable "WHEN … THE SYSTEM SHALL …" criteria; design, tasks and acceptance all trace to the number |
 | Two gates | No design before requirements are confirmed; no code before the blueprint is approved. Supports **pre-authorization** ("go with your recommendations, check in at milestones") |
 | Estimation against over-engineering | Back-of-envelope QPS/storage/bandwidth → architecture tier (L1 single box ~ L4 distributed). A 3-user project never gets Kubernetes |
 | Machine-checkable gates | A structural linter: required sections, MUST without EARS, ≥80% traceability floor, ghost REQ ids, ADR status enum, missing page inventory |
 | Page inventory (UX) | The basic unit of frontend requirements: page → route → REQ → key components; optional static HTML mockups |
 | ADRs | One-page decision records; the system gets its own chronicle |
-| Wave parallel execution | Tasks grouped by dependency graph; independent tasks run in parallel sessions/subagents |
-| Cross-session resume | Documents are the checkpoint: after context compaction, re-read docs; everything a subagent needs must be on disk before it is spawned |
+| Dual-agent execution | Every task: implementer writes code → zero-context reviewer audits against a checklist (code-review.md) → task is checked off only when the review passes; blocking findings go back to the implementer, max 2 rounds; tasks within a wave run in parallel |
+| Failure triage | Class A implementation errors: fix and retry (skip after 2 failed rounds); Class B plan/design errors: stop and revise the blueprint — no muddling through; Class C environment issues: auto-fix or skip |
+| Change conflict check | Requirement changes fan out through the traceability matrix across five fixed conflict classes (ownership / API signature / entity relations / rule contradictions / overlapping changes); each affected section gets a before → after and a revert / accept / drop ruling |
+| Cross-session resume | Documents are the checkpoint: after context compaction, re-read docs and run staleness detection (if the spec changed after the plan was generated, do impact analysis first); everything a subagent needs must be on disk before it is spawned |
 | Triage | Mini (one-page mini-blueprint) / Standard (four documents) / Full — a bug fix never triggers the full ceremony |
 
 ## Install
@@ -204,7 +235,7 @@ node scripts/check_traceability.mjs selftest/gate-pass   # expect exit 0
 
 Standing on the shoulders of the 2026 spec-driven-development community:
 
-[github/spec-kit](https://github.com/github/spec-kit) · [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec) · [bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) · [AWS Kiro](https://kiro.dev/) · [obra/superpowers](https://github.com/obra/superpowers) · [buildermethods/agent-os](https://github.com/buildermethods/agent-os)
+[github/spec-kit](https://github.com/github/spec-kit) · [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec) · [bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) · [AWS Kiro](https://kiro.dev/) · [obra/superpowers](https://github.com/obra/superpowers) · [buildermethods/agent-os](https://github.com/buildermethods/agent-os) · VibeCoding practice suite (prd-to-spec / spec-to-plan / execute-plan)
 
 Architecture depth (capacity estimation, selection argumentation, C4 modeling, quality/ops design, ADRs, script-checkable traceability) is this skill's own design.
 
